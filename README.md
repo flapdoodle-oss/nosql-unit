@@ -1,12 +1,11 @@
-% NoSQLUnit Reference Manual
-% 
-% 
+[![Build Status](https://buildhive.cloudbees.com/job/lordofthejars/job/nosql-unit/badge/icon)](https://buildhive.cloudbees.com/job/lordofthejars/job/nosql-unit/)
+
 
 Documentation
 =============
 
-Html: [View](http://lordofthejars.github.com/nosql-unit/index.html)
-Pdf: [Download](http://lordofthejars.github.com/nosql-unit/index.pdf)
+Html: [View](http://lordofthejars.github.com/nosql-unit/documentation.html)
+Pdf: [Download](http://lordofthejars.github.com/nosql-unit/documentation.pdf)
 
 
 NoSQLUnit Core
@@ -180,12 +179,12 @@ MongoDb Engine
 ==============
 
 MongoDb
--------
+=======
 
 MongoDb is a *NoSQL* database that stores structured data as *JSON-like*
 documents with dynamic schemas.
 
-*NoSQLUnit* supports *MongoDb* by using next classes:
+**NoSQLUnit** supports *MongoDb* by using next classes:
 
   ----------- -----------------------------------------------------
   In Memory   com.lordofthejars.nosqlunit.mongodb.InMemoryMongoDb
@@ -200,9 +199,10 @@ documents with dynamic schemas.
 
   : Manager Rule
 
-### Maven Setup
+Maven Setup
+-----------
 
-To use *NoSQLUnit* with MongoDb you only need to add next dependency:
+To use **NoSQLUnit** with MongoDb you only need to add next dependency:
 
 ~~~~ {.xml}
 <dependency>
@@ -212,8 +212,8 @@ To use *NoSQLUnit* with MongoDb you only need to add next dependency:
 </dependency>
 ~~~~
 
-Note that if you are plannig to use *in-memory* approach an extra
-dependency is required. *In-memory* mode is implemented using
+Note that if you are plannig to use **in-memory** approach an extra
+dependency is required. **In-memory** mode is implemented using
 *jmockmongo* . *JMockmongo* is a new project that help with unit testing
 Java-based MongoDb Applications by starting an in-process *Netty* server
 that speaks the *MongoDb* protocol and maintains databases and
@@ -249,7 +249,8 @@ To install add next [repository](#conf.jmockmongo_repo) and
 </dependency>
 ~~~~
 
-### Dataset Format
+Dataset Format
+--------------
 
 Default dataset file format in *MongoDb* module is *json* .
 
@@ -277,16 +278,17 @@ Datasets must have next [format](#ex.mongodb_dataset) :
 Notice that if attributes value are integers, double quotes are not
 required.
 
-### Getting Started
+Getting Started
+---------------
 
-#### Lifecycle Management Strategy
+### Lifecycle Management Strategy
 
 First step is defining which lifecycle management strategy is required
 for your tests. Depending on kind of test you are implementing (unit
 test, integration test, deployment test, ...) you will require an
-*in-memory* approach, *managed* approach or *remote* approach.
+**in-memory** approach, **managed** approach or **remote** approach.
 
-To configure *in-memory* approach you should only instantiate next
+To configure **in-memory** approach you should only instantiate next
 [rule](#program.inmemory_conf) :
 
 ~~~~ {.java}
@@ -294,7 +296,7 @@ To configure *in-memory* approach you should only instantiate next
 InMemoryMongoDb inMemoryMongoDb = new InMemoryMongoDb();
 ~~~~
 
-To configure the *managed* way, you should use ManagedMongoDb rule and
+To configure the **managed** way, you should use ManagedMongoDb rule and
 may require some [configuration](#program.managed_conf) parameters.
 
 ~~~~ {.java}
@@ -315,8 +317,6 @@ By default managed *MongoDb* rule uses next default values:
 -   Database path is at `{target
                                     path}
                                 ` `/mongo-dbpath` .
-
--   *Mongodb* is started with *fork* option.
 
 -   Because after execution of tests all generated data is removed, in
     `{target
@@ -353,7 +353,7 @@ can append *property=value* arguments using
 > when you are specifying command line arguments, remember to add slash
 > (-) and double slash (--) where is necessary.
 
-To stop *MongoDb* instance, *NoSQLUnit* sends a `shutdown` command to
+To stop *MongoDb* instance, **NoSQLUnit** sends a `shutdown` command to
 server using *Java Mongo AP* I. When this command is sent, the server is
 stopped and because connection is lost, *Java Mongo API* logs
 automatically an exception (read
@@ -403,14 +403,14 @@ with a testing failure. You will see something like:
         at
         org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:74)
 
-Configuring *remote* approach does not require any special rule because
-you (or System like Maven ) is the responsible of starting and stopping
-the server. This mode is used in deployment tests where you are testing
-your application on real environment.
+Configuring **remote** approach does not require any special rule
+because you (or System like Maven ) is the responsible of starting and
+stopping the server. This mode is used in deployment tests where you are
+testing your application on real environment.
 
-#### Configuring MongoDb Connection
+### Configuring MongoDb Connection
 
-Next step is configuring **Mongodb** rule in charge of maintaining
+Next step is configuring ***Mongodb*** rule in charge of maintaining
 *MongoDb* database into known state by inserting and deleting defined
 datasets. You must register MongoDbRule *JUnit* rule class, which
 requires a configuration parameter with information like host, port or
@@ -466,7 +466,7 @@ import static com.lordofthejars.nosqlunit.mongodb.MongoDbConfigurationBuilder.mo
 public MongoDbRule remoteMongoDbRule = new MongoDbRule(mongoDb().databaseName("test").host("my_remote_host").build());
 ~~~~
 
-#### Complete Example
+### Complete Example
 
 Consider a library application, which apart from multiple operations, it
 allow us to add new books to system. Our [model](#example.book_model) is
@@ -594,15 +594,15 @@ Neo4j Engine
 ============
 
 Neo4j
------
+=====
 
 Neo4j is a high-performance, *NoSQL* graph database with all the
 features of a mature and robust database.
 
-*NoSQLUnit* supports *Neo4j* by using next classes:
+**NoSQLUnit** supports *Neo4j* by using next classes:
 
   ------------------ ------------------------------------------------------------
-  In-Memory			 com.lordofthejars.nosqlunit.neo4j.InMemoryNeo4j
+  In Memory          com.lordofthejars.nosqlunit.neo4j.InMemoryNeo4j
   Embedded           com.lordofthejars.nosqlunit.neo4j.EmbeddedNeo4j
   Managed Wrapping   com.lordofthejars.nosqlunit.neo4j.ManagedWrappingNeoServer
   Managed            com.lordofthejars.nosqlunit.neo4j.ManagedNeoServer
@@ -616,9 +616,10 @@ features of a mature and robust database.
 
   : Manager Rule
 
-### Maven Setup
+Maven Setup
+-----------
 
-To use *NoSQLUnit* with Neo4j you only need to add next dependency:
+To use **NoSQLUnit** with Neo4j you only need to add next dependency:
 
 ~~~~ {.xml}
 <dependency>
@@ -628,7 +629,8 @@ To use *NoSQLUnit* with Neo4j you only need to add next dependency:
 </dependency>
 ~~~~
 
-### Dataset Format
+Dataset Format
+--------------
 
 Default dataset file format in *Neo4j* module is
 [GraphML](http://graphml.graphdrawing.org/) . *GraphML* is a
@@ -682,20 +684,20 @@ where:
 -   *data* : the key/value data associated with a graph element. Data
     value will be validated against type defined in key element.
 
-### Getting Started
+Getting Started
+---------------
 
-#### Lifecycle Management Strategy
+### Lifecycle Management Strategy
 
 First step is defining which lifecycle management strategy is required
 for your tests. Depending on kind of test you are implementing (unit
-test, integration test, deployment test, ...) you will require an in-memory approach,
-embedded approach, managed approach or remote approach. Note that there
-is no implementation of a *Neo4j* in-memory database at this time, but
-embedded strategy for unit tests will be the better one.
+test, integration test, deployment test, ...) you will require an
+in-memory approach, embedded approach, managed approach or remote
+approach.
 
-##### In-Memory Lifecycle
+#### In-memory Lifecycle
 
-To configure *in-memory* approach you should only instantiate next
+To configure **in-memory** approach you should only instantiate next
 [rule](#program.neo_inmemory_conf) :
 
 ~~~~ {.java}
@@ -705,9 +707,9 @@ import static com.lordofthejars.nosqlunit.neo4j.InMemoryNeo4j.InMemoryNeo4jRuleB
 public static InMemoryNeo4j inMemoryNeo4j = newInMemoryNeo4j().build();
 ~~~~
 
-##### Embedded Lifecycle
+#### Embedded Lifecycle
 
-To configure *embedded* approach you should only instantiate next
+To configure **embedded** approach you should only instantiate next
 [rule](#program.neo_embedded_conf) :
 
 ~~~~ {.java}
@@ -725,12 +727,14 @@ By default embedded *Neo4j* rule uses next default values:
 
   : Default Embedded Values
 
-##### Managed Lifecycle
+
+
+#### Managed Lifecycle
 
 To configure managed way, two possible approaches can be used:
 
-The first one is using an *embedded database wrapped by a server* . This
-is a way to give an embedded database visibility through network
+The first one is using an **embedded database wrapped by a server** .
+This is a way to give an embedded database visibility through network
 (internally we are creating a WrappingNeoServerBootstrapper instance) :
 
 ~~~~ {.java}
@@ -751,8 +755,8 @@ can be configured programmatically as shown in previous
 
   : Default Wrapped Values
 
-The second strategy is *starting and stopping an already installed
-server* on executing machine, by calling start and stop command lines.
+The second strategy is **starting and stopping an already installed
+server** on executing machine, by calling start and stop command lines.
 Next [rule](#program.neo_managed_conf) should be registered:
 
 ~~~~ {.java}
@@ -782,16 +786,16 @@ configured programmatically as shown in previous
 > have configured *Neo4j* to run through a different port, it should be
 > specified too in ManagedNeoServer rule.
 
-##### Remote Lifecycle
+#### Remote Lifecycle
 
-Configuring *remote* approach does not require any special rule because
-you (or System like Maven ) is the responsible of starting and stopping
-the server. This mode is used in deployment tests where you are testing
-your application on real environment.
+Configuring **remote** approach does not require any special rule
+because you (or System like Maven ) is the responsible of starting and
+stopping the server. This mode is used in deployment tests where you are
+testing your application on real environment.
 
-#### Configuring Neo4j Connection
+### Configuring Neo4j Connection
 
-Next step is configuring *Neo4j* rule in charge of maintaining *Neo4j*
+Next step is configuring **Neo4j** rule in charge of maintaining *Neo4j*
 graph into known state by inserting and deleting defined datasets. You
 must register Neo4jRule *JUnit* rule class, which requires a
 configuration parameter with information like host, port, uri or target
@@ -801,9 +805,10 @@ To make developer's life easier and code more readable, a fluent
 interface can be used to create these configuration objects. Two
 different kind of configuration builders exist.
 
-##### In-Memory/Embedded Connection
+#### In-Memory/Embedded Connection
 
-The first one is for configuring a connection to In-Memory/Embedded *Neo4j* .
+The first one is for configuring a connection to in-memory/embedded
+*Neo4j* .
 
 ~~~~ {.java}
 import static com.lordofthejars.nosqlunit.neo4j.EmbeddedNeoServerConfigurationBuilder.newEmbeddedNeoServerConfiguration;
@@ -813,14 +818,16 @@ public Neo4jRule neo4jRule = new Neo4jRule(newEmbeddedNeoServerConfiguration().b
 ~~~~
 
 If you are only registering one embedded *Neo4j* instance like previous
-[example](#program.neo_embedded_conf), calling `build` is enough. If you
-are using more than one *Neo4j* embedded connection like explained in
-[Simultaneous Engine](#advanced.simultaneous-engine-title) section,
+[example](#program.neo_embedded_conf) , calling `build` is enough. If
+you are using more than one *Neo4j* embedded connection like explained
+in [Simultaneous Engine](#advanced.simultaneous-engine-title) section,
 `targetPath` shall be provided by using `buildFromTargetPath` method.
 
-If you are using in-memory approach mixed with embedded approach, target path for in-memory instance can be found at *InMemoryNeo4j.INMEMORY_NEO4J_TARGET_PATH* variable.
+If you are using in-memory approach mixed with embedded approach, target
+path for in-memory instance can be found at
+`InMemoryNeo4j.INMEMORY_NEO4J_TARGET_PATH` variable.
 
-##### Remote Connection
+#### Remote Connection
 
 The second one is for configuring a connection to remote *Neo4j* server
 (it is irrelevant at this level if it is wrapped or not). Default values
@@ -840,7 +847,7 @@ import static com.lordofthejars.nosqlunit.neo4j.ManagedNeoServerConfigurationBui
 public Neo4jRule neo4jRule = new Neo4jRule(newManagedNeoServerConfiguration().build());
 ~~~~
 
-#### Verifying Graph
+### Verifying Graph
 
 @ShouldMatchDataSet is also supported for *Neo4j* graphs but we should
 keep in mind some considerations.
@@ -866,9 +873,9 @@ test readibility is affected negatively. So as general guide, my advice
 is to try to avoid using @ShouldMatchDataSet in your tests as much as
 possible.
 
-#### Full Example
+### Full Example
 
-To show how to use *NoSQLUnit* with *Neo4j*, we are going to create a
+To show how to use **NoSQLUnit** with *Neo4j* , we are going to create a
 very simple application that counts Neo's friends.
 
 [MatrixManager](#program.matrix_neo4j_manager) is the business class
@@ -1224,6 +1231,14 @@ configured programmatically:
 
   : Default Managed Values
 
+> **Warning**
+>
+> To start
+> Cassandra
+> java.home
+> must be set. Normally this variable is already configured, you would
+> need to do nothing.
+
 #### Remote Lifecycle
 
 Configuring **remote** approach does not require any special rule
@@ -1464,6 +1479,7 @@ which looks like:
     }]
 }
 ~~~~
+
 Redis Engine
 ============
 
@@ -1476,9 +1492,10 @@ lists, sets and sorted sets.
 
 **NoSQLUnit** supports *Redis* by using next classes:
 
-  --------- ------------------------------------------------
-  Managed   com.lordofthejars.nosqlunit.redis.ManagedRedis
-  --------- ------------------------------------------------
+  ---------- -------------------------------------------------
+  Embedded   com.lordofthejars.nosqlunit.redis.EmbeddedRedis
+  Managed    com.lordofthejars.nosqlunit.redis.ManagedRedis
+  ---------- -------------------------------------------------
 
   : Lifecycle Management Rules
 
@@ -1560,15 +1577,24 @@ structured data we need to store, one or more of next elements should
 appear. Note that key field is used to set the key of the element, and
 value field is used to set a value.
 
-  --------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  simple    In case we want to store simple key/value elements. This element will contain an array of key/value entries.
-  list      In case we want to store a key with a list of values. This element contain a *key* field for key name and *values* field with an array of values.
-  set       In case we want to store a key within a set (no duplicates allowed). Structure is the same as list element.
-  sortset   In case we want to store a key within a sorted set. This element contain the key, and an array of values, which each one, apart from value field, also contain *score* field of type Number, to set the order into sorted set.
-  hash      In case we want to store a key within a map of field/value. In this case *field* element set the field name, and *value* set the value of that field.
-  --------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-   *simple* : In case we want to store simple key/value elements. This
+    element will contain an array of key/value entries.
 
-  : Possible values in Redis Dataset
+-   *list* : In case we want to store a key with a list of values. This
+    element contain a *key* field for key name and *values* field with
+    an array of values.
+
+-   *set* In case we want to store a key within a set (no duplicates
+    allowed). Structure is the same as list element.
+
+-   *sortset* : In case we want to store a key within a sorted set. This
+    element contain the key, and an array of values, which each one,
+    apart from value field, also contain *score* field of type Number,
+    to set the order into sorted set.
+
+-   *hash* : In case we want to store a key within a map of field/value.
+    In this case *field* element set the field name, and *value* set the
+    value of that field.
 
 Getting Started
 ---------------
@@ -1582,13 +1608,28 @@ embedded approach, managed approach or remote approach.
 
 #### Embedded Lifecycle
 
-> **Warning**
->
-> Currently
-> Redis
-> does not support embedded lifecycle. For this reason I am developing
-> an embedded in-memory Redis mock. It is based in Jedis library, and
-> will be released in next version.
+To configure **embedded** approach you should only instantiate next
+[rule](#program.redis_embedded_conf) :
+
+~~~~ {.java}
+@ClassRule
+    public static EmbeddedRedis embeddedRedis = newEmbeddedRedisRule().build();
+~~~~
+
+By default managed *Redis* rule uses next default values but can be
+configured programmatically:
+
+  ------------- -------------------------------------------------------------------------------------------------------------------
+  Target path   This is the directory where *Redis* embedded instance is started and is `target/redis-test-data/impermanent-db` .
+  ------------- -------------------------------------------------------------------------------------------------------------------
+
+  : Default Embedded Values
+
+Note that target path is only used as a configuration parameter to allow
+multiple instances of embedded in-memory Redis engine.
+
+For more information about embedded in-memory Redis take a tour to
+section: [Embedded In-Memory Redis](#advanced.redis_embedded.section)
 
 #### Managed Lifecycle
 
@@ -1631,9 +1672,22 @@ To make developer's life easier and code more readable, a fluent
 interface can be used to create these configuration objects. Three
 different kind of configuration builders exist.
 
+#### Embedded Connection
+
+The first one is for configuring an embedded connection to managed
+*Redis* .
+
+~~~~ {.java}
+import static com.lordofthejars.nosqlunit.redis.RedisRule.RedisRuleBuilder.newRedisRule;
+                        
+@Rule
+public RedisRule redisRule = newRedisRule().defaultEmbeddedRedis();
+                        
+~~~~
+
 #### Managed Connection
 
-The first one is for configuring a connection to managed *Redis* .
+Configuring a connection to managed *Redis* .
 
 ~~~~ {.java}
 import static com.lordofthejars.nosqlunit.redis.ManagedRedisConfigurationBuilder.newManagedRedisConfiguration;
@@ -1661,6 +1715,39 @@ public RedisRule redisRule = new RedisRule(newRemoteRedisConfiguration().host("1
 Port parameter is already configured with default parameter of managed
 lifecycle. If port is changed, this class provides a method to set it.
 Note that host parameter must be specified in this case.
+
+#### Shard Connection
+
+Redis connection also be configured as shard using ShardedJedis
+capabilities.
+
+~~~~ {.java}
+import static com.lordofthejars.nosqlunit.redis.RemoteRedisConfigurationBuilder.newRemoteRedisConfiguration;
+
+@Rule
+public RedisRule redisRule = new RedisRule(newShardedRedisConfiguration()
+                .shard(host("127.0.0.1"), port(ManagedRedis.DEFAULT_PORT))
+                    .password("a")
+                    .timeout(1000)
+                    .weight(1000)
+                .shard(host("127.0.0.1"), port(ManagedRedis.DEFAULT_PORT + 1))
+                    .password("b")
+                    .timeout(3000)
+                    .weight(3000)
+                .build(););
+~~~~
+
+Note that only host and port is mandatory, the other ones uses default
+values.
+
+-   *password* : In case repository is protected with password this
+    attribute is used as password. Default values is null.
+
+-   *timeout* : Timeout for shard. By default timeout is set to 2
+    seconds.
+
+-   *weight* : The weight of that shard over the other ones. By default
+    is 1.
 
 ### Verifying Data
 
@@ -1772,8 +1859,432 @@ And dataset used is:
 }
 ~~~~
 
+HBase Engine
+============
+
+HBase
+=====
+
+Apache HBase is an open-source, distributed, versioned, column-oriented
+store.
+
+*NoSQLUnit* supports *HBase* by using next classes:
+
+  ---------- -------------------------------------------------
+  Embedded   com.lordofthejars.nosqlunit.hbase.EmbeddedHBase
+  Managed    com.lordofthejars.nosqlunit.hbase.ManagedHBase
+  ---------- -------------------------------------------------
+
+  : Lifecycle Management Rules
+
+  ---------------------- ---------------------------------------------
+  NoSQLUnit Management   com.lordofthejars.nosqlunit.hbase.HBaseRule
+  ---------------------- ---------------------------------------------
+
+  : Manager Rule
+
+Maven Setup
+-----------
+
+To use *NoSQLUnit* with HBase you only need to add next dependency:
+
+~~~~ {.xml}
+<dependency>
+    <groupId>com.lordofthejars</groupId>
+    <artifactId>nosqlunit-hbase</artifactId>
+    <version>${version.nosqlunit}</version>
+</dependency>
+~~~~
+
+Dataset Format
+--------------
+
+Default dataset file format in *HBase* module is json. Dataset in HBase
+is the same used by
+[Cassandra-Unit](https://github.com/jsevellec/cassandra-unit/) but not all
+fields are supported. Only fields available in TSV HBase application can
+be set into dataset.
+
+So as summary datasets must have next [format](#ex.hbase_dataset) :
+
+~~~~ {.json}
+{
+    "name" : "tablename",
+    "columnFamilies" : [{
+        "name" : "columnFamilyName",
+        "rows" : [{
+            "key" : "key1",
+            "columns" : [{
+                "name" : "columnName",
+                "value" : "columnValue"
+            },
+            ...
+            ]
+        },
+        ...
+        ]
+    },
+    ...
+    ]
+}
+~~~~
+
+Getting Started
+---------------
+
+### Lifecycle Management Strategy
+
+First step is defining which lifecycle management strategy is required
+for your tests. Depending on kind of test you are implementing (unit
+test, integration test, deployment test, ...) you will require an
+embedded approach, managed approach or remote approach.
+
+#### Embedded Lifecycle
+
+To configure *embedded* approach you should only instantiate next
+[rule](#program.hbase_embedded_conf) :
+
+~~~~ {.java}
+@ClassRule
+public static EmbeddedHBase embeddedHBase = newEmbeddedHBaseRule().build();
+~~~~
+
+By default embedded *Embedded* rule uses HBaseTestingUtility default
+values:
+
+  ------------------ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Target path        This is the directory where *HBase* stores data and is `target/data` .
+  Host               localhost
+  Port               By default port used is 60000.
+  File Permissions   Depending on your umask configuration, HBaseTestingUtility will create some directories that will not be accessible during runtime. By default this value is set to 775, but depending on your OS you may require a different value.
+  ------------------ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+  : Default Embedded Values
+
+#### Managed Lifecycle
+
+To configure *managed* approach you should only instantiate next
+[rule](#program.hbase_managed_conf) :
+
+~~~~ {.java}
+@ClassRule
+public static ManagedHBase managedHBase = newManagedHBaseServerRule().build();
+~~~~
+
+By default managed *HBase* rule uses next default values but can be
+configured programmatically:
+
+  --------------- ---------------------------------------------------------------------------------------------------------------------------
+  Target path     This is the directory where *HBase* server is started and is `target/hbase-temp` .
+  CassandraPath   *HBase* installation directory which by default is retrieved from `HBASE_HOME` system environment variable.
+  Port            By default port used is 60000. If port is changed in *HBase* configuration file, this port should be configured too here.
+  --------------- ---------------------------------------------------------------------------------------------------------------------------
+
+  : Default Managed Values
+
+> **Warning**
+>
+> To start
+> HBASE
+> JAVA\_HOME
+> must be set. Normally this variable is already configured, so you would
+> need to do nothing.
+
+#### Remote Lifecycle
+
+Configuring *remote* approach does not require any special rule because
+you (or System like Maven ) is the responsible of starting and stopping
+the server. This mode is used in deployment tests where you are testing
+your application on real environment.
+
+### Configuring HBase Connection
+
+Next step is configuring *HBase* rule in charge of maintaining *HBase*
+columns into known state by inserting and deleting defined datasets. You
+must register HBaseRule *JUnit* rule class, which requires a
+configuration parameter with some information.
+
+To make developer's life easier and code more readable, a fluent
+interface can be used to create these configuration objects. Three
+different kind of configuration builders exist.
+
+#### Embedded Connection
+
+The first one is for configuring a connection to embedded *HBase* .
+
+~~~~ {.java}
+import static com.lordofthejars.nosqlunit.hbase.EmbeddedHBase.EmbeddedHBaseRuleBuilder.newEmbeddedHBaseRule;
+
+@Rule
+public HBaseRule hBaseRule = newHBaseRule().defaultEmbeddedHBase();
+~~~~
+
+Embedded HBase does not require any special parameter. Configuration
+object is copied from Embedded rule directly to HBaseRule.
+
+#### Managed Connection
+
+This is for configuring a connection to managed *HBase* .
+
+~~~~ {.java}
+import static com.lordofthejars.nosqlunit.hbase.ManagedHBaseConfigurationBuilder.newManagedHBaseConfiguration;
+
+@Rule
+public HBaseRule hbaseRule = new HBaseRule(newManagedHBaseConfiguration().build());
+~~~~
+
+By default configuration used is the one loaded by calling
+HBaseConfiguration.create() method.
+[HBaseConfiguration.create()](http://hbase.apache.org/apidocs/org/apache/hadoop/hbase/HBaseConfiguration.html#create())
+which uses hbase-site.xml and hbase-default.xml classpath files.
+
+But also a method `setProperty` method is provided to modify any
+parameter of generated configuration object.
+
+#### Remote Connection
+
+Configuring a connection to remote *HBase* uses same approach like
+ManagedHBase configuration object but using
+com.lordofthejars.nosqlunit.hbase.RemoteHBaseConfigurationBuilder class
+instead of
+com.lordofthejars.nosqlunit.hbase.ManagedHBaseConfigurationBuilder. .
+
+> **Warning**
+>
+> Working with Apache HBase required a bit of knowledge about how it
+> works. For example your /etc/hosts file cannot contain a reference to
+> your host name with ip 127.0.1.1.
+>
+> Moreover *NoSQLUnit* uses *HBase-0.94.1* and this version should be
+> also installed in your computer to work with managed or remote approach. If you
+> install another version, you should exclude these artifacts from
+> *NoSQLUnit* dependencies, and add the new ones manually to your pom
+> file.
+
+### Verifying Data
+
+@ShouldMatchDataSet is also supported for *HBase* data but we should
+keep in mind some considerations.
+
+If you plan to verify data with @ShouldMatchDataSet in Managed and
+Remote approach, you should enable Aggregate coprocessor by editing
+hbase-site-xml file and adding next lines:
+
+~~~~ {.xml}
+<property>
+    <name>hbase.coprocessor.user.region.classes</name>
+    <value>org.apache.hadoop.hbase.coprocessor.AggregateImplementation</value>
+</property>
+~~~~
+
+### Full Example
+
+To show how to use *NoSQLUnit* with *HBase* , we are going to create a
+very simple application.
+
+[PersonManager](#program.person_hbase_manager) is the business class
+responsible of getting and updating person's car.
+
+~~~~ {.java}
+public class PersonManager {
+
+    private Configuration configuration;
+    
+    public PersonManager(Configuration configuration) {
+        this.configuration = configuration;     
+    }
+    
+    public String getCarByPersonName(String personName) throws IOException {
+        HTable table = new HTable(configuration, "person");
+        Get get = new Get("john".getBytes());
+        Result result = table.get(get);
+        
+        return new String(result.getValue(toByteArray().convert("personFamilyName"), toByteArray().convert("car")));
+    }
+    
+    private Converter<String, byte[]> toByteArray() {
+        return new Converter<String, byte[]>() {
+
+            @Override
+            public byte[] convert(String element) {
+                return element.getBytes();
+            }
+        };
+    }
+    
+}
+~~~~
+
+And now one unit test is written:
+
+For [unit](#program.person_hbase_unit) test we are going to use embedded
+approach:
+
+~~~~ {.java}
+public class WhenPersonWantsToKnowItsCar {
+
+    @ClassRule
+    public static EmbeddedHBase embeddedHBase = newEmbeddedHBaseRule().build();
+    
+    @Rule
+    public HBaseRule hBaseRule = newHBaseRule().defaultEmbeddedHBase(this);
+    
+    @Inject
+    private Configuration configuration;
+    
+    
+    @Test
+    @UsingDataSet(locations="persons.json", loadStrategy=LoadStrategyEnum.CLEAN_INSERT)
+    public void car_should_be_returned() throws IOException {
+
+        PersonManager personManager = new PersonManager(configuration);
+        String car = personManager.getCarByPersonName("john");
+        
+        assertThat(car, is("toyota"));      
+    }
+    
+}
+~~~~
+
+And dataset used is:
+
+~~~~ {.json}
+{
+    "name" : "person",
+    "columnFamilies" : [{
+        "name" : "personFamilyName",
+        "rows" : [{
+            "key" : "john",
+            "columns" : [{
+                "name" : "age",
+                "value" : "22"
+            },
+            {
+                "name" : "car",
+                "value" : "toyota"
+            }]
+        },
+        {
+            "key" : "mary",
+            "columns" : [{
+                "name" : "age",
+                "value" : "33"
+            },
+            {
+                "name" : "car",
+                "value" : "ford"
+            }]
+        }]
+    }]
+}
+~~~~
+
 Advanced Usage
 ==============
+
+Embedded In-Memory Redis
+========================
+
+When you are writing unit tests you should keep in mind that they must
+run fast, which implies, among other things, no interaction with IO
+subsystem (disk, network, ...). To avoid this interaction in database
+unit tests, there are embedded in-memory databases like *H2* , *HSQLDB*
+, *Derby* or in case of *NoSQL* , engines like *Neo4j* or *Cassandra*
+have their own implementation. But *Redis* does not have any way to
+create an embedded in-memory instance in Java. For this reason I have
+written an embedded in-memory *Redis* implementation based on *Jedis*
+project.
+
+If you are using **NoSQLUnit** you only have to register embedded
+*Redis* rule as described [here](#program.redis_embedded_conf) , and
+internally **NoSQLUnit** will create instance for you, and you will be
+able to [inject](#advanced.jsr330-title) the instance into your code.
+
+But also can be used outside umbrella of **NoSQLUnit** , by
+instantiating manually, as described in next
+[example:](#advanced.instantiate-embedded-redis)
+
+~~~~ {.java}
+EmbeddedRedisBuilder embeddedRedisBuilder = new EmbeddedRedisBuilder();
+Jedis jedis = embeddedRedisBuilder.createEmbeddedJedis();   
+            
+~~~~
+
+Notice that Jedis class is the main class defined by Jedis project but
+proxied to use in-memory data instead of sending requests to remote
+server.
+
+Almost all *Redis* operations have been implemented but it has some
+limitations:
+
+-   Connection commands do nothing, they do not throw any exception but
+    neither do any action. In fact would not have sense that they do
+    something.
+
+-   Scripting commands are not supported, and an
+    UnsupportedOperationException will be thrown if they are called.
+
+-   Transaction commands are not supported, but they do not throw any
+    exception, simply returns a null value and in cases of List return
+    type, an empty list is returned.
+
+-   Pub/Sub commands do nothing.
+
+-   Server commands are implemented, but there are some commands that
+    have no sense and returns a constant result:
+
+    *move* always return 1.
+
+    *debug* commands throws an UnsupportedOperationException.
+
+    *bgrewriteaof, save, bgsave, configSet, configResetStat, salveOf,
+    slaveOfNone and slowLogReset* returns an OK.
+
+    *configGet, slowLogGet and slowLogGetBinary* returns an empty list.
+
+-   From Key commands, only sort by pattern is not supported.
+
+All the other operations, including flushing, expiration control, and
+each operation of every datatype is supported in the same way Jedis
+support it. Note that expiration management is also implemented as
+described in Redis manual.
+
+> **Warning**
+>
+> This implementation of Redis is provided for testing purposes not as a
+> substitution of Redis. Feel free to notify any issue of this
+> implementation so can be fixed or implemented.
+
+Managing lifecycle of multiple instances
+========================================
+
+Sometimes your test will require that more than one instance of same
+database server (running in different ports) was started. For example
+for testing database sharding. In [next
+example](#advanced.multipleinstances-database) we see how to configure
+**NoSQLUnit** to manage lifecycle of multiple instances.
+
+~~~~ {.java}
+@ClassRule
+public static ManagedRedis managedRedis79 = newManagedRedisRule().redisPath("/opt/redis-2.4.16")
+                                                                 .targetPath("target/redis1")
+                                                                 .configurationPath(getAbsoluteFilePath("src/test/resources/redis_6379.conf"))
+                                                                 .port(6379)
+                                            .build();
+
+@ClassRule
+public static ManagedRedis managedRedis80 = newManagedRedisRule().redisPath("/opt/redis-2.4.16")
+                                                                 .targetPath("target/redis2")
+                                                                 .configurationPath(getAbsoluteFilePath("src/test/resources/redis_6380.conf"))
+                                                                 .port(6380)
+                                            .build();
+            
+~~~~
+
+> **Warning**
+>
+> Note that target path should be set to different values for each
+> instance, if not some started processes could not be shutdown.
 
 Fast Way
 ========
@@ -1943,13 +2454,6 @@ private Mongo mongo2;
 
 Stay In Touch
 =============
-
-Future releases
----------------
-
-Version 0.4.0 will have support for *Neo4J and Cassandra.*
-
-Next versions will contain support for *HBase* and *CouchDb* .
 
 Stay in Touch
 -------------

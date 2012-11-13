@@ -16,8 +16,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class ListDatatypeOperations {
+public class ListDatatypeOperations extends ExpirationDatatypeOperations implements RedisDatatypeOperations {
 
+	protected static final String LIST = "list";
 	private static final String KO = "-";
 	private static final String OK = "OK";
 	protected BlockingMap<ByteBuffer, ByteBuffer> blockingMultimap = TransferMap.create();
@@ -239,7 +240,12 @@ public class ListDatatypeOperations {
 
 		try {
 			this.blockingMultimap.remove(wrappedKey, realIndex);
-			this.blockingMultimap.addElementAt(wrappedKey, wrap(value), realIndex);
+			ByteBuffer insertedValue = this.blockingMultimap.addElementAt(wrappedKey, wrap(value), realIndex);
+			
+			if(insertedValue == null) {
+				return KO;
+			}
+			
 		} catch (IndexOutOfBoundsException e) {
 			return KO;
 		}
@@ -529,39 +535,39 @@ public class ListDatatypeOperations {
 		return numberOfElementsRemoved;
 	}
 
-	 /**
-     * Trim an existing list so that it will contain only the specified range of
-     * elements specified. Start and end are zero-based indexes. 0 is the first
-     * element of the list (the list head), 1 the next element and so on.
-     * <p>
-     * For example LTRIM foobar 0 2 will modify the list stored at foobar key so
-     * that only the first three elements of the list will remain.
-     * <p>
-     * start and end can also be negative numbers indicating offsets from the
-     * end of the list. For example -1 is the last element of the list, -2 the
-     * penultimate element and so on.
-     * <p>
-     * Indexes out of range will not produce an error: if start is over the end
-     * of the list, or start > end, an empty list is left as value. If end over
-     * the end of the list Redis will threat it just like the last element of
-     * the list.
-     * <p>
-     * Hint: the obvious use of LTRIM is together with LPUSH/RPUSH. For example:
-     * <p>
-     * {@code lpush("mylist", "someelement"); ltrim("mylist", 0, 99); * }
-     * <p>
-     * The above two commands will push elements in the list taking care that
-     * the list will not grow without limits. This is very useful when using
-     * Redis to store logs for example. It is important to note that when used
-     * in this way LTRIM is an O(1) operation because in the average case just
-     * one element is removed from the tail of the list.
-     * <p>
-     * 
-     * @param key
-     * @param start
-     * @param end
-     * @return Status code reply
-     */
+	/**
+	 * Trim an existing list so that it will contain only the specified range of
+	 * elements specified. Start and end are zero-based indexes. 0 is the first
+	 * element of the list (the list head), 1 the next element and so on.
+	 * <p>
+	 * For example LTRIM foobar 0 2 will modify the list stored at foobar key so
+	 * that only the first three elements of the list will remain.
+	 * <p>
+	 * start and end can also be negative numbers indicating offsets from the
+	 * end of the list. For example -1 is the last element of the list, -2 the
+	 * penultimate element and so on.
+	 * <p>
+	 * Indexes out of range will not produce an error: if start is over the end
+	 * of the list, or start > end, an empty list is left as value. If end over
+	 * the end of the list Redis will threat it just like the last element of
+	 * the list.
+	 * <p>
+	 * Hint: the obvious use of LTRIM is together with LPUSH/RPUSH. For example:
+	 * <p>
+	 * {@code lpush("mylist", "someelement"); ltrim("mylist", 0, 99); * }
+	 * <p>
+	 * The above two commands will push elements in the list taking care that
+	 * the list will not grow without limits. This is very useful when using
+	 * Redis to store logs for example. It is important to note that when used
+	 * in this way LTRIM is an O(1) operation because in the average case just
+	 * one element is removed from the tail of the list.
+	 * <p>
+	 * 
+	 * @param key
+	 * @param start
+	 * @param end
+	 * @return Status code reply
+	 */
 	public String ltrim(final byte[] key, final int start, final int end) {
 
 		ByteBuffer wrappedKey = wrap(key);
@@ -573,14 +579,32 @@ public class ListDatatypeOperations {
 		try {
 			List<ByteBuffer> sublist = elements.subList(calculatedStart, calculatedEnd);
 			this.blockingMultimap.replaceValues(wrappedKey, sublist);
-		}catch(IndexOutOfBoundsException e) {
+		} catch (IndexOutOfBoundsException e) {
+			return KO;
+		} catch(IllegalArgumentException e) {
 			return KO;
 		}
-		
+
 		return OK;
-		
+
 	}
 
+	public long getNumberOfKeys() {
+		return this.blockingMultimap.size();
+	}
+
+	public void flushAllKeys() {
+		removeExpirations();
+		this.blockingMultimap.clear();
+	}
+
+	private void removeExpirations() {
+		List<byte[]> keys = this.keys();
+		for (byte[] key : keys) {
+			this.removeExpiration(key);
+		}
+	}
+	
 	private long removeFirstElements(final int count, ByteBuffer wrappedKey, ByteBuffer wrappedValue) {
 
 		long numberOfElementsRemoved = 0;
@@ -795,6 +819,76 @@ public class ListDatatypeOperations {
 			return value;
 		}
 
+	}
+
+	@Override
+	public Long del(byte[]... keys) {
+
+		long numberOfRemovedElements = 0;
+
+		for (byte[] key : keys) {
+			ByteBuffer wrappedKey = wrap(key);
+			if (this.blockingMultimap.containsKey(wrappedKey)) {
+				this.blockingMultimap.clear(wrappedKey);
+				removeExpiration(key);
+				numberOfRemovedElements++;
+			}
+		}
+
+		return numberOfRemovedElements;
+	}
+
+	@Override
+	public boolean exists(byte[] key) {
+		return this.blockingMultimap.containsKey(wrap(key));
+	}
+
+	@Override
+	public boolean renameKey(byte[] key, byte[] newKey) {
+		ByteBuffer wrappedKey = wrap(key);
+
+		if (this.blockingMultimap.containsKey(wrappedKey)) {
+			Collection<ByteBuffer> elements = this.blockingMultimap.elements(wrappedKey);
+			this.blockingMultimap.clear(wrap(newKey));
+			this.blockingMultimap.putLast(wrap(newKey), elements);
+			this.blockingMultimap.clear(wrappedKey);
+			
+			renameTtlKey(key, newKey);
+			
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public List<byte[]> keys() {
+		return new ArrayList<byte[]>(convert(this.blockingMultimap.keySet(),
+				ByteBuffer2ByteArrayConverter.createByteBufferConverter()));
+	}
+
+	@Override
+	public String type() {
+		return LIST;
+	}
+
+	@Override
+	public List<byte[]> sort(byte[] key) {
+		try {
+			return sortNumberValues(key);
+		} catch (NumberFormatException e) {
+			return convert(this.blockingMultimap.elements(wrap(key)),
+					ByteBuffer2ByteArrayConverter.createByteBufferConverter());
+		}
+	}
+
+	private List<byte[]> sortNumberValues(byte[] key) {
+		List<Double> values = new ArrayList<Double>(convert(this.blockingMultimap.elements(wrap(key)),
+				ByteBufferAsString2DoubleConverter.createByteBufferAsStringToDoubleConverter()));
+
+		Collections.sort(values);
+		return new LinkedList<byte[]>(convert(values,
+				DoubleToStringByteArrayConverter.createDoubleToStringByteArrayConverter()));
 	}
 
 }

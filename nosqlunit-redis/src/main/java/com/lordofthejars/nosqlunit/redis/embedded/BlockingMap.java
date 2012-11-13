@@ -1,6 +1,7 @@
 package com.lordofthejars.nosqlunit.redis.embedded;
 
 import java.util.Collection;
+import java.util.Set;
 
 
 public interface BlockingMap<K, V> {
@@ -24,4 +25,7 @@ public interface BlockingMap<K, V> {
 	int lastIndexOf(K key, V value);
 	void clear(K key);
 	void replaceValues(K key, Collection<V> newElements);
+	int size();
+	void clear();
+	Set<K> keySet();
 }

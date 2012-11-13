@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>nosqlunit</artifactId>
 		<groupId>com.lordofthejars</groupId>
-		<version>0.4.2-SNAPSHOT</version>
+		<version>0.7.1-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>nosqlunit-demo</artifactId>
@@ -22,15 +22,27 @@
 						<exclude>**/When*.java</exclude>
 						<exclude>**/*.json</exclude>
 					</excludes>
-				<includes>
-					<include>**/*TestSuite.java</include>
-				</includes>
+					<includes>
+						<include>**/*TestSuite.java</include>
+					</includes>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-core-asl</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
 
 		<dependency>
 			<artifactId>nosqlunit-mongodb</artifactId>
@@ -49,6 +61,11 @@
 		</dependency>
 		<dependency>
 			<artifactId>nosqlunit-redis</artifactId>
+			<groupId>com.lordofthejars</groupId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>nosqlunit-hbase</artifactId>
 			<groupId>com.lordofthejars</groupId>
 			<version>${project.version}</version>
 		</dependency>

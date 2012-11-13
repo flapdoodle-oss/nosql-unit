@@ -9,15 +9,20 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.neo4j.server.configuration.Configurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.lordofthejars.nosqlunit.core.AbstractLifecycleManager;
 import com.lordofthejars.nosqlunit.core.CommandLineExecutor;
 import com.lordofthejars.nosqlunit.core.OperatingSystem;
 import com.lordofthejars.nosqlunit.core.OperatingSystemResolver;
 import com.lordofthejars.nosqlunit.core.OsNameSystemPropertyOperatingSystemResolver;
+import com.lordofthejars.nosqlunit.env.SystemEnvironmentVariables;
 
 public class ManagedNeoServer extends AbstractLifecycleManager {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(ManagedNeoServer.class); 
+	
 	private static final String START_COMMAND = "start";
 	private static final String STOP_COMMAND = "stop";
 	private static final String STATUS_COMMAND = "status";
@@ -35,7 +40,7 @@ public class ManagedNeoServer extends AbstractLifecycleManager {
 
 	private String targetPath = DEFAULT_NEO4J_TARGET_PATH;
 
-	private String neo4jPath = System.getProperty("NEO4J_HOME");
+	private String neo4jPath = SystemEnvironmentVariables.getEnvironmentOrPropertyVariable("NEO4J_HOME");
 
 	private int port = Configurator.DEFAULT_WEBSERVER_PORT;
 
@@ -97,6 +102,9 @@ public class ManagedNeoServer extends AbstractLifecycleManager {
 
 	@Override
 	protected void doStart() throws Throwable {
+		
+		LOGGER.info("Starting {} Neo4j instance.", neo4jPath);
+		
 		File targetPathDirectory = ensureTargetPathDoesNotExitsAndReturnCompositePath();
 
 		if (targetPathDirectory.mkdirs()) {
@@ -112,10 +120,15 @@ public class ManagedNeoServer extends AbstractLifecycleManager {
 			throw new IllegalStateException("Target Path " + targetPathDirectory
 					+ " could not be created.");
 		}
+		
+		LOGGER.info("Started {} Neo4j instance.", neo4jPath);
 	}
 
 	@Override
 	protected void doStop() {
+		
+		LOGGER.info("Stopping {} Neo4j instance.", neo4jPath);
+		
 		try {
 			stopNeo4j();
 		} catch (InterruptedException e) {
@@ -124,6 +137,8 @@ public class ManagedNeoServer extends AbstractLifecycleManager {
 			// until neo4j 1.8 data directory cannot be configured.
 			ensureTargetPathDoesNotExitsAndReturnCompositePath();
 		}
+		
+		LOGGER.info("Stopped {} Neo4j instance.", neo4jPath);
 	}
 
 

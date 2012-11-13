@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
@@ -102,6 +103,16 @@ public class TransferMap<K, V> implements BlockingMap<K, V> {
 	}
 
 	@Override
+	public int size() {
+		return backingMap.size();
+	}
+	
+	@Override
+	public void clear() {
+		backingMap.clear();
+	}
+	
+	@Override
 	public int size(K key) {
 		LinkedBlockingDeque<V> elements = backingMap.get(key);
 		
@@ -181,11 +192,14 @@ public class TransferMap<K, V> implements BlockingMap<K, V> {
 	
 	
 	@Override
+	public Set<K> keySet() {
+		return this.backingMap.keySet();
+	}
+
+	@Override
 	public void clear(K key) {
 		if(backingMap.containsKey(key)) {
-			LinkedBlockingDeque<V> elements = backingMap.get(key);
-			elements.clear();
-			backingMap.put(key, elements);
+			backingMap.remove(key);
 		}
 	}
 

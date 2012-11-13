@@ -3,19 +3,20 @@ package com.lordofthejars.nosqlunit.redis.embedded;
 import static ch.lambdaj.Lambda.convert;
 import static java.nio.ByteBuffer.wrap;
 
-import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import redis.clients.util.SafeEncoder;
 
-public class StringDatatypeOperations {
+public class StringDatatypeOperations extends ExpirationDatatypeOperations implements RedisDatatypeOperations {
 
+	protected static final String STRING = "string";
 	private static final int NEGATE = -1;
 	private static final long NONE_SUCCESS = 0;
 	private static final long SUCCESS = 1;
@@ -354,6 +355,9 @@ public class StringDatatypeOperations {
 			ByteBuffer value = simpleTypes.get(oldKey);
 			simpleTypes.remove(oldKey);
 			simpleTypes.put(wrap(newKey), value);
+			
+			renameTtlKey(oldKey, newKey);
+			
 			return OK;
 		}
 	}
@@ -382,6 +386,7 @@ public class StringDatatypeOperations {
 		 */
 		ByteBuffer byteBufferKey = wrap(key);
 		if (!simpleTypes.containsKey(byteBufferKey)) {
+			simpleTypes.put(wrap(key), wrap(value));
 			return null;
 		} else {
 			ByteBuffer oldValue = simpleTypes.get(byteBufferKey);
@@ -404,4 +409,104 @@ public class StringDatatypeOperations {
 		return NONE_SUCCESS;
 	}
 
+	public String setex(final byte[] key, final int seconds, final byte[] value) {
+		String result = this.set(key, value);
+		this.addExpirationTime(key, seconds, TimeUnit.SECONDS);
+		return result;
+	}
+	
+	/**
+     * Return a subset of the string from offset start to offset end (both
+     * offsets are inclusive). Negative offsets can be used in order to provide
+     * an offset starting from the end of the string. So -1 means the last char,
+     * -2 the penultimate and so forth.
+     * <p>
+     * The function handles out of range requests without raising an error, but
+     * just limiting the resulting range to the actual length of the string.
+     * <p>
+     * 
+     * @param key
+     * @param start
+     * @param end
+     * @return Bulk reply
+     */
+    public byte[] substr(final byte[] key, final int start, final int end) {
+    	return getrange(key, start, end);
+    }
+	
+	public long getNumberOfKeys() {
+		return this.simpleTypes.keySet().size();
+	}
+	
+	public void flushAllKeys() {
+		this.removeExpirations();
+		this.simpleTypes.clear();
+	}
+
+	private void removeExpirations() {
+		List<byte[]> keys = this.keys();
+		for (byte[] key : keys) {
+			this.removeExpiration(key);
+		}
+	}
+	
+	@Override
+	public Long del(byte[]... keys) {
+
+		long numberOfRemovedElements = 0;
+		
+		for (byte[] key : keys) {
+			ByteBuffer wrappedKey = wrap(key);
+			if(this.simpleTypes.containsKey(wrappedKey)) {
+				this.simpleTypes.remove(wrappedKey);
+				removeExpiration(key);
+				numberOfRemovedElements++;
+			}
+		}
+		
+		return numberOfRemovedElements;
+	}
+
+	
+	
+	@Override
+	public boolean exists(byte[] key) {
+		return this.simpleTypes.containsKey(wrap(key));
+	}
+
+	@Override
+	public boolean renameKey(byte[] key, byte[] newKey) {
+		ByteBuffer wrappedKey = wrap(key);
+
+		if (this.simpleTypes.containsKey(wrappedKey)) {
+			ByteBuffer element = this.simpleTypes.get(wrappedKey);
+			this.simpleTypes.remove(wrap(newKey));
+			this.simpleTypes.put(wrap(newKey), element);
+			this.simpleTypes.remove(wrappedKey);
+			
+			renameTtlKey(key, newKey);
+			
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public List<byte[]> keys() {
+		return new ArrayList<byte[]>(convert(this.simpleTypes.keySet(),
+				ByteBuffer2ByteArrayConverter.createByteBufferConverter()));
+	}
+
+	@Override
+	public String type() {
+		return STRING;
+	}
+
+	@Override
+	public List<byte[]> sort(byte[] key) {
+		throw new UnsupportedOperationException();
+	}
+
+	
 }
